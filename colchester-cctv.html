@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CCTV Viewer</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111;
+}
+
+/* LIVE ROW */
+#live {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+.live-box {
+    flex: 1;
+    height: 200px;
+    background: #8b0000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.live-box a {
+    margin-top: 10px;
+    padding: 6px 10px;
+    background: white;
+    color: black;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+/* GRID */
+#cams {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 8px;
+    padding: 10px;
+}
+
+.cam {
+    background: #000;
+    padding: 5px;
+}
+
+.cam img {
+    width: 100%;
+}
+
+.label {
+    font-size: 11px;
+    color: #ccc;
+    padding-top: 4px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LIVE CAMS -->
+<div id="live">
+    <div class="live-box">
+        LIVE<br>Brightlingsea
+        <a href="https://www.camsecure.co.uk/brightlingsea_webcam.html" target="_blank">Watch</a>
+    </div>
+    <div class="live-box">
+        LIVE<br>Harbour
+        <a href="https://brightlingseaharbour.org/webcam/" target="_blank">Watch</a>
+    </div>
+    <div class="live-box">
+        LIVE<br>Harbour Alt
+        <a href="https://brightlingseaharbour.org/webcam/" target="_blank">Watch</a>
+    </div>
+</div>
+
+<div id="cams"></div>
+
+<script>
+
+const cameras = [
+
+/* ---------------- NEW PRIORITY CAMS (YOU ADDED) ---------------- */
+{url:"https://blackwatersailingclub.co.uk/webcam/pontoon.jpg?t=1774699372382",lat:51.734238,lng:0.713682},
+{url:"https://blackwatersailingclub.co.uk/webcam/millbeach.jpg?t=1774699553173",lat:51.734238,lng:0.713682},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55508.jpg?t=1774699464336",lat:51.680775,lng:0.003674},
+{url:"https://cctv.essexhighways.org/03K07.jpg?t=1774699500191",lat:51.900674,lng:0.896587},
+{url:"https://cctv.essexhighways.org/07K04.jpg?t=1774699530774",lat:51.717351,lng:0.451641},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55683.jpg?t=1774699581437",lat:51.633840,lng:0.220332},
+{url:"https://cctv.essexhighways.org/03K08.jpg?t=1774699573040",lat:51.899244,lng:0.895128},
+
+/* ---------------- ORIGINAL PRIORITY ---------------- */
+{url:"https://cctv.essexhighways.org/07K14.jpg",lat:51.756631,lng:0.127587},
+{url:"https://cctv.essexhighways.org/07K02.jpg",lat:51.734238,lng:0.713682},
+{url:"https://cctv.essexhighways.org/10K01.jpg",lat:51.571735,lng:0.454860},
+{url:"https://cctv.essexhighways.org/03K16.jpg",lat:51.920291,lng:0.903969},
+
+/* ---------------- EVERYTHING ELSE (UNCHANGED) ---------------- */
+
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56394.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56411.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56425.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56435.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56451.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56467.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56469.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56473.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56496.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56504.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56515.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56547.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56580.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56613.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/56628.jpg"},
+
+{url:"https://cctv.essexhighways.org/06K01.jpg"},
+{url:"https://cctv.essexhighways.org/06K02.jpg"},
+
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/50729.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/50730.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/50731.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/50732.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/50733.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/50734.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/50735.jpg"},
+
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55501.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55504.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55508.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55511.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55516.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55521.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55529.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55532.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55535.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55543.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55546.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55550.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55554.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55556.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55565.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55568.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55578.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55580.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55584.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55591.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55595.jpg"},
+{url:"https://public.highwaystrafficcameras.co.uk/cctvpublicaccess/images/55602.jpg"},
+
+{url:"https://cctv.essexhighways.org/07K13.jpg"},
+{url:"https://cctv.essexhighways.org/07K14.jpg"},
+{url:"https://cctv.essexhighways.org/07K11.jpg"},
+{url:"https://cctv.essexhighways.org/07K15.jpg"},
+{url:"https://cctv.essexhighways.org/07K02.jpg"},
+{url:"https://cctv.essexhighways.org/07K05.jpg"},
+{url:"https://cctv.essexhighways.org/10K01.jpg"},
+
+{url:"https://cctv.essexhighways.org/03K16.jpg"},
+{url:"https://cctv.essexhighways.org/03K09.jpg"},
+{url:"https://cctv.essexhighways.org/03K13.jpg"},
+
+{url:"https://archive.allsky.tv/AMS264/LATEST/012641.jpg"}
+
+];
+
+const container = document.getElementById("cams");
+
+cameras.forEach(cam => {
+    const div = document.createElement("div");
+    div.className = "cam";
+
+    div.innerHTML = `
+        <img src="${cam.url}&t=${Date.now()}" loading="lazy">
+        <div class="label">
+            ${cam.lat ? "Lat: " + cam.lat + " | Lng: " + cam.lng : ""}
+        </div>
+    `;
+
+    container.appendChild(div);
+});
+
+</script>
+
+</body>
+</html>
